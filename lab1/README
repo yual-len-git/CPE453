@@ -1,0 +1,12 @@
+Lab01
+1.Allen Yu
+
+"How is this LWP library different from a real thread management library? Name two ways in which this LWP library API could be improved."
+
+2. LWP is limited in scheduling and threading and doesn't follow a standard. Round Robin scheduling is not optimal for scheduling individual threads. More data types could be returned as a improvement and better control for the threads.
+
+3. No special instructions
+
+4. Did not full test this program. I had bunch of issues mainly to get the files and how to move the files off unix and onto main pc. Submitted late cause of that.
+
+
