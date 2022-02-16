@@ -1,0 +1,41 @@
+Allen Yu
+
+-python3 schedSim.py <job-file.txt> -p <ALGORITHM> -q <QUANTUM>
+to run program
+
+- Flags -p and -q are required
+- was not able to get SRTN workin properly missing something
+
+
+1. For what types of workloads does SRTN deliver the same turnaround times as FIFO?
+
+SRTN has the same turnaround time as FIFO when the jobs are the same burst sizes or if if the jobs are larger one after the other.
+
+2. For what types of workloads and quantum lengths does SRTN deliver the same response times as RR?
+
+when the quantum is larger than the longest job. 
+
+3. What happens to response time with SRTN as job lengths increase? Can you use the simulator to demonstrate the trend?
+
+The longer the job length gets the longer the average job length gets as well. 
+
+Input:
+10 5
+100 10
+200 20
+400 30
+800 40
+
+Out:
+Job   0 -- Turnaround: 10.00 Wait 0.00
+Job   1 -- Turnaround: 105.00 Wait 5.00
+Job   2 -- Turnaround: 295.00 Wait 95.00
+Job   3 -- Turnaround: 685.00 Wait 285.00
+Job   4 -- Turnaround: 1475.00 Wait 675.00
+Average -- Turnaround 514.00 Wait 212.00
+
+
+4. What happens to response time with RR as quantum lengths increase? Can you write an equation that gives the worst-case response time, given N jobs?
+
+As the quantum length increases the response time increases with it. 
+Q(n-1)
