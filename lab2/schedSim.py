@@ -82,10 +82,94 @@ def RR(schedule, quantum):
     averageTime(schedule)
 
 
+
 def SRTN(schedule):
+    running = []
+    arrival = []
     time = 0
+    for process in schedule:
+        running.append(process.process_number)
+        arrival.append(process.arrival_time)
+
+    count = 1
+    while running:
+        for jobs in schedule:
+            if jobs.finished == False:
+                current = jobs
+            else:
+                continue
+            for job in schedule:
+                if job.finished == True:
+                    continue
+                elif job.arrival_time <= current.arrival_time or time >= job.arrival_time:
+                    if job.burst_time <= current.burst_time and job.arrival_time <= current.arrival_time:
+                        current = job
+
+            # print(str(count) + " " + str(current.process_number))
+            print("count: %d pn: %d time: %d arrival: %d" % (count, current.process_number, time, current.arrival_time))
+            count += 1
+
+            if arrival:
+                for i in arrival:
+                    if i == time:
+                        arrival.remove(time)
+                    print("Arrival: %d" % i)
+
+                if time >= current.arrival_time:
+                    time += 1
+                    current.remaining -= 1
+                else:
+                    time += 1
+                
+            else:
+                time += current.remaining
+                current.remaining = 0
+
+            print(str(current.process_number) + str(current.remaining))
+
+            if current.remaining == 0 and current.finished == False:
+                current.finished = True
+                running.remove(current.process_number)
+                current.wait_time = time - current.arrival_time - current.burst_time
+                current.turnaround_time = time - current.arrival_time
 
 
+
+
+    # for jobs in schedule:
+    #     current = jobs
+    #     for job in schedule:
+    #         if job.process_number not in running:
+    #             continue
+    #         elif current.arrival_time == job.arrival_time:
+    #             if current.burst_time > job.burst_time:
+    #                 current = job
+
+    #         # if arrival:
+    #         #     for i in arrival:
+    #         #         if i == time:
+    #         #             arrival.remove(i)
+    #         #     time += 1
+    #         #     current.remaining -= 1
+    #         # else:
+    #         time += current.remaining
+    #         current.remaining = 0
+
+    #         # time += current.remaining
+    #         # current.remaining = 0
+        
+
+    #     if current.remaining == 0 and current.finished == False:
+    #         current.finished = True
+    #         running.remove(current.process_number)
+    #         current.wait_time = time - current.arrival_time - current.burst_time
+    #         current.turnaround_time = time - current.arrival_time
+
+
+
+    for job in schedule:
+        jobTime(job)
+    averageTime(schedule)
 
 
 def jobTime(job):
@@ -114,6 +198,9 @@ def main():
     quantum = getQuantum()
     schedule = scheduleSetup()
 
+    for i in schedule:
+        print(str(i.process_number) + " " +str(i.arrival_time) + " " + str(i.burst_time))
+
     if algorithm == "FIFO":
         FIFO(schedule)
     elif algorithm == "RR":
@@ -121,13 +208,6 @@ def main():
     elif algorithm == "SRTN":
         SRTN(schedule)
 
-
-    for job in schedule:
-        print(job.process_number)
-        schedule.remove(job)
-        for jobs in schedule:
-            print(jobs.process_number)
-            print(" ")
 
 
 
