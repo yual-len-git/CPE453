@@ -1,8 +1,7 @@
 import sys
-import collections
 import os.path
 
-bsb = "BACKKING_STORE.bin"
+bsb = "BACKING_STORE.bin"
 valid = ["FIFO", "LRU", "OPT"]
 
 
@@ -22,12 +21,37 @@ class physicalMemory:
         # self.frames
 
 class FIFO:
-    def __init__(self, ):
+    def __init__(self):
+        pass
+
+    def get(self):
+        pass
+
+    def set(self):
+        pass
+
+
+    def pop(self):
         pass
 
 
 class OPT:
-    def __init__(self) -> None:
+    def __init__(self, fNum):
+        self.fNum = fNum
+        
+    def get(self):
+        pass
+
+    def set(self):
+        pass
+
+    def pop(self):
+        pass
+
+    def priority(self, input):
+        pass
+
+    def calculate(self):
         pass
 
 
@@ -37,7 +61,13 @@ class LRU:
         self.pages = []
 
     def get(self, page):
+        pass
 
+    def set(self, frame):
+        pass
+
+
+    
 
 
 def main():
@@ -52,9 +82,19 @@ def main():
         sys.exit()
 
     inputFile = sys.argv[1]
-    frames = sys.argv[2]
+    frames = int(sys.argv[2])
     pra = sys.argv[3]
-    
+
+    frames = 256 
+    if frames < 0 or frames > 256:
+        frames = 256
+    if pra not in valid:
+        pra = "FIFO"
+
+
+    print("Hello")
+    print(frames)
+    print(pra)
 
 
 
