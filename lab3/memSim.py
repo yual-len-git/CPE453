@@ -31,10 +31,6 @@ class FIFO:
         pass
 
 
-    def pop(self):
-        pass
-
-
 class OPT:
     def __init__(self, fNum):
         self.fNum = fNum
@@ -66,37 +62,56 @@ class LRU:
     def set(self, frame):
         pass
 
+def setup():
+    addresses = []
+    frames = 256
+    pra = "FIFO"
 
-    
-
-
-def main():
     if os.path.isfile(bsb) == False:
         print("BACKING_STORE.bin is missing")
         sys.exit()
-    
-    if (len(sys.argv)) < 4 or (len(sys.argv)) > 4:
+    if (len(sys.argv)) < 2:
         print("Order must be as follows")
         print("Input: python3 memSim <reference-sequence-file.txt> <FRAMES> <PRA>")
-        print("Use FRAMES = 256 and PRA = FIFO for default settings")
+        print("FRAMES = 256 and PRA = FIFO for default settings")
         sys.exit()
+    if (len(sys.argv)) >= 3:
+        try:
+            if int(sys.argv[2]) < 0 or int(sys.argv[2]) > 256:
+                frames = 256
+            else:
+                frames = int(sys.argv[2])
+        except:
+            print("Not valid integer default frames 256")
+    if (len(sys.argv)) >= 4:
+        if sys.argv[3] in valid:
+            pra = sys.argv[3]
 
-    inputFile = sys.argv[1]
-    frames = int(sys.argv[2])
-    pra = sys.argv[3]
+    inputFile = open(sys.argv[1], "r")
+    for line in inputFile:
+        print(line)
+        addresses.append(int(line))
+    inputFile.close()
 
-    frames = 256 
-    if frames < 0 or frames > 256:
-        frames = 256
-    if pra not in valid:
-        pra = "FIFO"
+    return addresses, frames, pra
 
 
-    print("Hello")
+def main():
+    addresses, frames, pra = setup()
+     
+
+
+
+
+
+
+
+
+
+    print(addresses)
     print(frames)
     print(pra)
-
-
+    
 
 
 if __name__ == "__main__":

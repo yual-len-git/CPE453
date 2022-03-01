@@ -1,3 +1,6 @@
-def main():
+import sys
+import os.path
 
-    file_name, frames, pra = parseArgs(sys.argv)
+
+
+backing_store = open("BACKING_STORE.bin")
