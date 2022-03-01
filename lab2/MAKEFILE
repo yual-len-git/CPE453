@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+all: run
 
 run:
 	python3 schedSim.py sched1.txt -p RR -q 2

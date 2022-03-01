@@ -106,7 +106,7 @@ def SRTN(schedule):
                     if job.remaining <= current.remaining:
                         current = job
 
-            print("time: %d pn: %d arrival: %d burst: %d" % (time, current.process_number, current.arrival_time, current.remaining))
+            # print("time: %d pn: %d arrival: %d burst: %d" % (time, current.process_number, current.arrival_time, current.remaining))
 
             if arrival:
                 tmp = arrival
@@ -166,8 +166,8 @@ def main():
     quantum = getQuantum()
     schedule = scheduleSetup()
 
-    for i in schedule:
-        print(str(i.process_number) + " " +str(i.arrival_time) + " " + str(i.burst_time))
+    # for i in schedule:
+    #     print(str(i.process_number) + " " +str(i.arrival_time) + " " + str(i.burst_time))
 
     if algorithm == "FIFO":
         FIFO(schedule)

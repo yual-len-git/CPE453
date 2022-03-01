@@ -4,7 +4,7 @@ Allen Yu
 to run program
 
 - Flags -p and -q are required
-- was not able to get SRTN workin properly missing something
+
 
 
 1. For what types of workloads does SRTN deliver the same turnaround times as FIFO?
@@ -27,11 +27,11 @@ Input:
 800 40
 
 Out:
-Job   0 -- Turnaround: 10.00 Wait 0.00
-Job   1 -- Turnaround: 105.00 Wait 5.00
-Job   2 -- Turnaround: 295.00 Wait 95.00
-Job   3 -- Turnaround: 685.00 Wait 285.00
-Job   4 -- Turnaround: 1475.00 Wait 675.00
+Job   0 -- Turnaround 10.00 Wait 0.00
+Job   1 -- Turnaround 105.00 Wait 5.00
+Job   2 -- Turnaround 295.00 Wait 95.00
+Job   3 -- Turnaround 685.00 Wait 285.00
+Job   4 -- Turnaround 1475.00 Wait 675.00
 Average -- Turnaround 514.00 Wait 212.00
 
 
