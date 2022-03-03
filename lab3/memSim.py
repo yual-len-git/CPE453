@@ -21,34 +21,23 @@ class physicalMemory:
         # self.frames
 
 class FIFO:
-    def __init__(self):
-        pass
-
-    def get(self):
-        pass
-
-    def set(self):
-        pass
-
-
-class OPT:
     def __init__(self, fNum):
         self.fNum = fNum
-        
-    def get(self):
-        pass
+        self.pages = []
 
-    def set(self):
-        pass
+    def get(self, pNum):
+        for page in self.pages:
+            if page.pNum == pNum:
+                return page
+        return None
 
-    def pop(self):
-        pass
+    def set(self, frame):
+        page = None
+        if len(self.pages) == self.fNum:
+            page = self.pages.pop()
+        self.pages.insert(0, frame)
+        return page
 
-    def priority(self, input):
-        pass
-
-    def calculate(self):
-        pass
 
 
 class LRU:
@@ -62,10 +51,23 @@ class LRU:
     def set(self, frame):
         pass
 
-def setup():
+
+# class OPT:
+#     def __init__(self, fNum):
+#         self.fNum = fNum
+        
+#     def get(self):
+#         pass
+
+#     def set(self):
+#         pass
+
+#     def pop(self):
+#         pass
+
+
+def getAddress():
     addresses = []
-    frames = 256
-    pra = "FIFO"
 
     if os.path.isfile(bsb) == False:
         print("BACKING_STORE.bin is missing")
@@ -75,6 +77,15 @@ def setup():
         print("Input: python3 memSim <reference-sequence-file.txt> <FRAMES> <PRA>")
         print("FRAMES = 256 and PRA = FIFO for default settings")
         sys.exit()
+    inputFile = open(sys.argv[1], "r")
+    for line in inputFile:
+        addresses.append(int(line))
+    inputFile.close()
+
+    return addresses
+
+def getFrames():
+    frames = 256
     if (len(sys.argv)) >= 3:
         try:
             if int(sys.argv[2]) < 0 or int(sys.argv[2]) > 256:
@@ -83,25 +94,41 @@ def setup():
                 frames = int(sys.argv[2])
         except:
             print("Not valid integer default frames 256")
+    return frames
+
+def getPRA():
+    pra = 'FIFO'
     if (len(sys.argv)) >= 4:
         if sys.argv[3] in valid:
             pra = sys.argv[3]
+    return pra
 
-    inputFile = open(sys.argv[1], "r")
-    for line in inputFile:
-        print(line)
-        addresses.append(int(line))
-    inputFile.close()
-
-    return addresses, frames, pra
-
+def readBin(frames):
+    file = open("BACKING_STORE.bin", "rb")
+    size = 256
+    file.seek(size * frames)
+    return file.read(size)
 
 def main():
-    addresses, frames, pra = setup()
-     
+    addresses = getAddress()
+    frames = getFrames()
+    pra = getPRA()
+    memory = [None] * frames
+    hits = 0
+    misses = 0
+    pFaults = 0
+    phits = 0
+    pageNum = 0
+    count = 0
+    tlb = FIFO(16)
 
-
-
+    if pra == "LRU":
+        page_table = LRU(frames)
+    # elif pra == "OPT":
+    #     page_table = OPT(frames, addresses)
+    else:
+        page_table = FIFO(frames)    
+        
 
 
 
