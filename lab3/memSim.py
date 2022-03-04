@@ -1,3 +1,4 @@
+import binascii
 import sys
 import os.path
 
@@ -5,9 +6,10 @@ bsb = "BACKING_STORE.bin"
 valid = ["FIFO", "LRU", "OPT"]
 
 
-class page:
-    def __init__(self, pNum, frame):
+class Page:
+    def __init__(self, pNum, fNum, frame):
         self.pNum = pNum
+        self.fNum = fNum
         self.frame = frame
 
 class TLB:
@@ -15,30 +17,45 @@ class TLB:
         self.page = page
         self.frame = frame
 
-class physicalMemory:
-    def __init__(self, fNum):
-        self.fNum = fNum
-        # self.frames
+class memoryTable:
+    def __init__(self, addresses, frames, pra):
+        self.addresses = addresses
+        self.frames = frames
+        self.pra = pra
+        self.memory = [None] * frames
+        self.hits = 0
+        self.misses = 0
+        self.pFaults = 0
+        self.pHits = 0
+        self.pageNum = 0
+        self.count = 0
+        self.tlb = FIFO(16)
+        self.tHits = 0
+        self.tMisses = 0
+        # if pra == "LRU":
+        #     self.pageTable = LRU(frames)
+        # elif pra == "OPT":
+        #     pageTable = OPT(frames, addresses)
+        # else:
+        self.pageTable = FIFO(frames)
 
 class FIFO:
     def __init__(self, fNum):
         self.fNum = fNum
         self.pages = []
 
-    def get(self, pNum):
+    def get(self, pNum):                #searches through pages for page number
         for page in self.pages:
             if page.pNum == pNum:
                 return page
         return None
 
-    def set(self, frame):
+    def set(self, frame):               
         page = None
         if len(self.pages) == self.fNum:
             page = self.pages.pop()
         self.pages.insert(0, frame)
         return page
-
-
 
 class LRU:
     def __init__(self, fNum):
@@ -65,7 +82,6 @@ class LRU:
 #     def pop(self):
 #         pass
 
-
 def getAddress():
     addresses = []
 
@@ -77,6 +93,7 @@ def getAddress():
         print("Input: python3 memSim <reference-sequence-file.txt> <FRAMES> <PRA>")
         print("FRAMES = 256 and PRA = FIFO for default settings")
         sys.exit()
+
     inputFile = open(sys.argv[1], "r")
     for line in inputFile:
         addresses.append(int(line))
@@ -109,36 +126,64 @@ def readBin(frames):
     file.seek(size * frames)
     return file.read(size)
 
+def pageFault(ptable, pNum):
+    ptable.pFaults += 1
+    frame = readBin(pNum)
+    page = Page(pNum, ptable.pageNum, frame)
+    ptable.pageTable.set(page)
+    ptable.tlb.set(page)
+    ptable.pageNum += 1
+    return ptable.pageNum
+
+def simulate(ptable, address):
+    pNum = address >> 8
+    print(pNum)
+    offset = address & 0xFF
+    page = ptable.tlb.get(pNum)
+    if page == None or page.frame != ptable.memory[page.fNum]:
+        page = None
+    if page == None:
+        ptable.tMisses += 1
+        page = ptable.pageTable.get(pNum)
+        if page == None:
+            pFault = pageFault(ptable, pNum)
+            page = ptable.pageTable.get(pNum)
+        else:
+            ptable.pHits += 1
+            ptable.tlb.set(page)
+    else:
+        ptable.pHits += 1
+        ptable.tHits += 1
+
+    data = page.frame[offset]
+    if data > 127:
+        data -= 256
+    print(ptable.pFaults, ptable.tMisses)
+    printdata(address, data, page.fNum, page.frame)
+    ptable.count += 1
+
+
+def printdata(address, data, pNum, frame):
+    print("%d, %s, %d" % (address, data, pNum))
+    print("%s" % binascii.hexlify(frame).upper())
+
+def printStats(ptable):
+    print("Number of Translated Address = %d" % (ptable.pHits + ptable.pFaults))
+    print("Page Faults = %d" % (ptable.pFaults))
+    print("Page Fault Rate = %3.3f" % (ptable.pFaults / (ptable.pFaults + ptable.pHits)))
+    print("TLB Hits = %d" % ptable.pHits)
+    print("TLB Misses = %d" % ptable.tMisses)
+    print("TLB Hit Rate = %3.3f" % (ptable.pHits / (ptable.tHits + ptable.tMisses)))
+
 def main():
     addresses = getAddress()
     frames = getFrames()
     pra = getPRA()
-    memory = [None] * frames
-    hits = 0
-    misses = 0
-    pFaults = 0
-    phits = 0
-    pageNum = 0
-    count = 0
-    tlb = FIFO(16)
+    pt = memoryTable(addresses, frames, pra)
+    for address in addresses:
+        simulate(pt, address)
+    printStats(pt)
 
-    if pra == "LRU":
-        page_table = LRU(frames)
-    # elif pra == "OPT":
-    #     page_table = OPT(frames, addresses)
-    else:
-        page_table = FIFO(frames)    
-        
-
-
-
-
-
-
-    print(addresses)
-    print(frames)
-    print(pra)
-    
 
 
 if __name__ == "__main__":
