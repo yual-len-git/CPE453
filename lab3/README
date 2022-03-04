@@ -1,0 +1,5 @@
+Allen Yu
+
+python3 memSim.py <addresses file> <frames> <pra>
+
+Was only able to get FIFO working

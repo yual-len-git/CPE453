@@ -62,10 +62,16 @@ class LRU:
         self.fNum = fNum
         self.pages = []
 
-    def get(self, page):
-        pass
-
+    def get(self, pNum):                 #searches for page if it exists moves it bottom 
+        for page in self.pages:
+            if pNum == page.pNum:
+                page.pop(page.index(pNum))
+                page.insert(0, pNum)
+                return page
+        return page
+        
     def set(self, frame):
+        
         pass
 
 
@@ -137,12 +143,12 @@ def pageFault(ptable, pNum):
 
 def simulate(ptable, address):
     pNum = address >> 8
-    print(pNum)
+    # print(pNum)
     offset = address & 0xFF
     page = ptable.tlb.get(pNum)
     try:
         page.frame != ptable.memory[page.fNum]
-    except:
+    except AttributeError:
         page = None
     if page == None:
         ptable.tMisses += 1
@@ -160,7 +166,7 @@ def simulate(ptable, address):
     data = page.frame[offset]
     if data > 127:
         data -= 256
-    print(ptable.pFaults, ptable.tMisses)
+    # print(ptable.pFaults, ptable.tMisses)
     printdata(address, data, page.fNum, page.frame)
     ptable.count += 1
 
