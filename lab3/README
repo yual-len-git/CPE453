@@ -2,4 +2,4 @@ Allen Yu
 
 python3 memSim.py <addresses file> <frames> <pra>
 
-Was only able to get FIFO working
+Wasn't able to fully test if they work but given example case was met.

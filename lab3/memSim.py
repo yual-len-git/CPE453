@@ -50,11 +50,11 @@ class FIFO:
                 return page
         return None
 
-    def set(self, frame):               
+    def set(self, frame):               #pops off back of list while inserting to front    
         page = None
         if len(self.pages) == self.fNum:
-            page = self.pages.pop()
-        self.pages.insert(0, frame)
+            page = self.pages.pop(0)
+        self.pages.append(frame)
         return page
 
 class LRU:
@@ -62,17 +62,18 @@ class LRU:
         self.fNum = fNum
         self.pages = []
 
-    def get(self, pNum):                 #searches for page if it exists moves it bottom 
+    def get(self, pNum):                 #searches for page if it exists moves it to the pack 
         for page in self.pages:
             if pNum == page.pNum:
-                page.pop(page.index(pNum))
-                page.insert(0, pNum)
+                page.remove(pNum)
+                page.append(pNum)
                 return page
         return page
         
     def set(self, frame):
-        
-        pass
+        if len(self.pages) == self.fNum:
+            self.pages.pop(0)
+        self.pages.append(frame)
 
 
 # class OPT:
@@ -85,8 +86,6 @@ class LRU:
 #     def set(self):
 #         pass
 
-#     def pop(self):
-#         pass
 
 def getAddress():
     addresses = []
@@ -136,9 +135,9 @@ def pageFault(ptable, pNum):
     ptable.pFaults += 1
     frame = readBin(pNum)
     page = Page(pNum, ptable.pageNum, frame)
+    ptable.pageNum += 1
     ptable.pageTable.set(page)
     ptable.tlb.set(page)
-    ptable.pageNum += 1
     return ptable.pageNum
 
 def simulate(ptable, address):
@@ -148,13 +147,13 @@ def simulate(ptable, address):
     page = ptable.tlb.get(pNum)
     try:
         page.frame != ptable.memory[page.fNum]
-    except AttributeError:
+    except:
         page = None
     if page == None:
         ptable.tMisses += 1
         page = ptable.pageTable.get(pNum)
         if page == None:
-            pFault = pageFault(ptable, pNum)
+            pageFault(ptable, pNum)
             page = ptable.pageTable.get(pNum)
         else:
             ptable.pHits += 1
@@ -163,16 +162,16 @@ def simulate(ptable, address):
         ptable.pHits += 1
         ptable.tHits += 1
 
-    data = page.frame[offset]
-    if data > 127:
-        data -= 256
+    valueRef = page.frame[offset]
+    if valueRef > 127:
+        valueRef -= 256
     # print(ptable.pFaults, ptable.tMisses)
-    printdata(address, data, page.fNum, page.frame)
+    printdata(address, valueRef, page.fNum, page.frame)
     ptable.count += 1
 
 
-def printdata(address, data, pNum, frame):
-    print("%d, %s, %d" % (address, data, pNum))
+def printdata(address, valueRef, fNum, frame):
+    print("%d, %s, %d" % (address, valueRef, fNum))
     print("%s" % binascii.hexlify(frame).upper())
 
 def printStats(ptable):
