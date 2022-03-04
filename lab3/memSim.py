@@ -140,7 +140,9 @@ def simulate(ptable, address):
     print(pNum)
     offset = address & 0xFF
     page = ptable.tlb.get(pNum)
-    if page == None or page.frame != ptable.memory[page.fNum]:
+    try:
+        page.frame != ptable.memory[page.fNum]
+    except:
         page = None
     if page == None:
         ptable.tMisses += 1
